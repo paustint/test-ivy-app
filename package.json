@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "npm run ngcc",
-    "ngcc": "ngcc --loglevel debug --properties es2015 browser module main"
+    "ngcc": "ngcc --loglevel debug --properties es2015 browser module main --async false"
   },
   "private": true,
   "dependencies": {
