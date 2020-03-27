@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "npm run ngcc",
-    "ngcc": "ngcc"
+    "ngcc": "ngcc --loglevel debug"
   },
   "private": true,
   "dependencies": {
