@@ -1,0 +1,62 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+# EXAMPLES:
+# https://github.com/filipesilva/angular-cli/blob/c6bf54ea97f8e8086cc4d7fd062e706323899226/docs/documentation/stories/continuous-integration.md
+#
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version you desire here
+      - image: circleci/node:12.3-browsers
+
+      # Specify service dependencies here if necessary
+      # CircleCI maintains a library of pre-built images
+      # documented at https://circleci.com/docs/2.0/circleci-images/
+      # - image: circleci/mongo:3.4.4
+    working_directory: ~/fueskit
+    environment:
+      CONN_ENC_KEY: 'M49rF0qwdNudDQOmX4L6ySvFVpil5HYWqMp1N94MGb4='
+      CONN_SIG_KEY: 'Mj0M7Mv8oX2LQjeoOg+8dLqumsQ9ST5angx/GFKTosaGZQrr3HjMk5TZ0Jv24wqerdfRv+WrR/rd8uxm+t74Pg=='
+
+    steps:
+      - checkout
+      - run:
+          name: Show current branch
+          command: echo ${CIRCLE_BRANCH}
+      - restore_cache:
+          keys:
+            - dependency-cache-v1-{{ checksum "package.json" }}
+            - landing-page-dependency-cache-{{ checksum "landing-site/package.json" }}
+      # - run:
+      #     name: 'Init environment variables'
+      #     command: |
+      #       echo 'export CONN_ENC_KEY="M49rF0qwdNudDQOmX4L6ySvFVpil5HYWqMp1N94MGb4="' >> $BASH_ENV
+      #       echo 'export CONN_SIG_KEY="Mj0M7Mv8oX2LQjeoOg+8dLqumsQ9ST5angx/GFKTosaGZQrr3HjMk5TZ0Jv24wqerdfRv+WrR/rd8uxm+t74Pg=="' >> $BASH_ENV
+      - run:
+          name: 'install-npm'
+          # This will install all core dependencies as well as landing page dependencies
+          command: npm install
+      - run:
+          name: 'Run ngcc'
+          # This will pre-compile all 3rd party libraries to provide ivy entry points
+          command: npm run ngcc
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "package.json" }}
+      - save_cache:
+          paths:
+            - landing-site/node_modules
+          key: landing-page-dependency-cache-{{ checksum "landing-site/package.json" }}
+      - run:
+          name: build
+          command: npm run build:ci
+      - run:
+          name: test
+          # xvfb-run is used to run npm run to run a command using a virtual screen, which is needed by Chrome.
+          command: xvfb-run -a npm run test -- --watch=false --no-progress --browsers=ChromeNoSandbox
+      - run:
+          name: 'test:server'
+          command: npm run test:server
