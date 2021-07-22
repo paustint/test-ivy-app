@@ -100,7 +100,7 @@
     "tslib": "^1.10.0",
     "tslint-config-prettier": "^1.18.0",
     "winston": "^2.4.0",
-    "xlsx": "^0.13.5",
+    "xlsx": "^0.17.0",
     "xlsx-writestream": "^0.5.1",
     "xml": "^1.0.1",
     "xml2js": "^0.4.19",
